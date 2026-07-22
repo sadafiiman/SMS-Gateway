@@ -1,0 +1,35 @@
+services:
+  sms-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sms-gateway:local
+    container_name: sms-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      READ_TIMEOUT: "5s"
+      WRITE_TIMEOUT: "10s"
+      SHUTDOWN_TIMEOUT: "15s"
+      NORMAL_WORKERS: "20"
+      EXPRESS_WORKERS: "10"
+      QUEUE_SIZE: "10000"
+      PRICE_NORMAL: "100"
+      PRICE_OTP: "150"
+      PRICE_EXPRESS: "300"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+# This service intentionally has no database/cache dependency: the
+# current implementation stores state in memory (see
+# docs/ARCHITECTURE.md for why, and for the swap-in plan for
+# PostgreSQL + Redis + a message broker in a real deployment). Adding
+# those here later is just a matter of adding `postgres:` / `redis:`
+# services and wiring their connection settings into the environment
+# block above.
