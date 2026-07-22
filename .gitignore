@@ -1,0 +1,9 @@
+/bin/
+/tmp/
+*.log
+.env
+.idea/
+.vscode/
+*.test
+coverage.out
+coverage.html
